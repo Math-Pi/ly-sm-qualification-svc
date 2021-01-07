@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ly.cloud.mapper.base.ZglsmdPOMapper" >
+  	<!-- 以下写查询方法 -->
+  	<!-- 根据批次ID获取临时名单 -->
+  	<select id="selectLsmdByPcid" resultType="com.ly.cloud.vo.base.ZglsmdVO">
+  		select * from zhxg_zg_zglsmd where pcid=#{pcid}
+  	</select>
+  	<select id="selectDataCount" resultType="java.lang.Integer">
+  	 select count(1) from zhxg_zg_zglsmd t where t.pcid=#{pcid}
+  	</select>
+  	<!-- 以下写插入方法 -->
+  		<!-- 根据对象ID和批次ID进行插入 -->
+  		<insert id="insertPoByIdAndPcid" parameterType="String">
+  			insert into zhxg_zg_zglsmd (pkid,dxid,cjsj,pcid,bfhtj,fhtj)
+			select sys_guid(),id,sysdate,pcid,bfhtj,fhtj from zhxg_zg_zgglmd where id=#{id} and pcid=#{pcid}
+  		</insert>
+  		<!-- 根据返回值类型和批次ID进行插入 -->
+  		<insert id="insertFhPoByPcid" parameterType="String">
+  			insert into zhxg_zg_zglsmd (pkid,dxid,cjsj,pcid,bfhtj,fhtj,zt)
+			select sys_guid(),id,sysdate,pcid,bfhtj,fhtj,zt from zhxg_zg_zgglmd where  pcid=#{pcid} and zt='1'
+  		</insert>
+  		<insert id="insertAllPoByPcid" parameterType="String">
+  			insert into zhxg_zg_zglsmd (pkid,dxid,cjsj,pcid,bfhtj,fhtj,zt)
+			select sys_guid(),id,sysdate,pcid,bfhtj,fhtj,zt from zhxg_zg_zgglmd where  pcid=#{pcid}
+  		</insert>
+  		<insert id="insertNoFhPoByPcid" parameterType="String">
+  			insert into zhxg_zg_zglsmd (pkid,dxid,cjsj,pcid,bfhtj,fhtj,zt)
+			select sys_guid(),id,sysdate,pcid,bfhtj,fhtj,zt from zhxg_zg_zgglmd where  pcid=#{pcid} and zt='0'
+  		</insert>
+  	<!-- 批量插入方法，此方法不要改动否则更新表的时候会被覆盖 -->
+  	<!-- 使用此方法的时候请使用NHMybatisUtils.batchCommit(ZglsmdPOMapper.class,list);进行调用，这主要是为了解决插入数据量多的时候需要分批次插入 -->
+    <insert id="insertPOBatch" parameterType="java.util.List">
+	    insert into ZHXG_ZG_ZGLSMD(PKID,DXID,CJSJ,PCID)
+	        (
+	            <foreach collection="list" item="row" index="index" separator="union all">
+	                (select 
+						#{row.pkid,jdbcType=VARCHAR},
+						#{row.dxid,jdbcType=VARCHAR},
+						#{row.cjsj,jdbcType=TIMESTAMP},
+						#{row.pcid,jdbcType=VARCHAR}
+	                   from dual)
+	            </foreach> 
+	        )
+	</insert>
+  	
+  	<!-- 以下写更新方法 -->
+  	
+  	<!-- 以下写删除方法 -->
+  		<!-- 把cjsj大于30分钟的数据清空 -->
+  		<delete id="deleteByCjsj">
+  			delete zhxg_zg_zglsmd where (TO_NUMBER(sysdate - cjsj) * 24 * 60)>30
+  		</delete>
+  		
+  		<!-- 根据批次ID删除数据 -->
+  		<delete id="deleteByPcid" parameterType="String">
+  			delete zhxg_zg_zglsmd where pcid=#{pcid}
+  		</delete>
+</mapper>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSources>
+    <dataSource id="zhxg_selector_bmxx">
+        <description>部门选择器的数据</description>
+        <treeSql>
+           select * from (
+			  select t.dm as key,t.mc as title,'1' as select_flag,'-1' as fid,'bmlb' as search_field_key,'2' as icon,t.pxh 
+			  from ZHXG_XTGL_DMK_CL t where t.flid=(select pkid from ZHXG_XTGL_DMK_FL t where t.dmbz='XTGL_BMLB')
+			  and t.zt='1'
+			  union all
+			  select '-1' as key,t1.xxmc as title,'0' as select_flag,'' as fid,'' as search_field_key,'1' as icon,0 as pxh  
+			  from ZHXG_XTGL_JCSJ_XXXX t1 where t1.xxdm=(select csz from VC_ZHXG_XTGL_CSSZ where csbz='XTGL_DQXX')
+			  union all
+			  select distinct t.pkid as key,t.bmmc as title,'1' as select_flag,nvl2(t2.pkid,t.sjbmid,t.bmlb) as fid,'sjbmid' as search_field_key,'2' as icon,t.pxh
+			  from ZHXG_XTGL_JCSJ_BMXX t 
+			  left join ZHXG_XTGL_JCSJ_BMXX t1 on t1.sjbmid=t.pkid
+			  left join ZHXG_XTGL_JCSJ_BMXX t2 on t2.pkid=t.sjbmid
+			  where t1.pkid is not null and t.zt=1
+			) order by pxh asc
+        </treeSql>
+        <tableSql>
+            select t.pkid as bmid,t.bmdm,t.bmmc,t.bmjc,t.sjbmid,t.bmlb,t.zt,t.pxh from ZHXG_XTGL_JCSJ_BMXX t
+			where t.zt='1' 
+			and not exists (
+			     select 1 from ZHXG_XTGL_JCSJ_BMXX t1 
+			    left join ZHXG_XTGL_JCSJ_BMXX t2 on t2.sjbmid=t1.pkid
+			    where t2.pkid is not null and t1.pkid=t.pkid
+			)
+			order by t.pxh asc
+        </tableSql>
+    </dataSource>
+    <dataSource id="zhxg_selector_jsxx">
+        <description>教师选择器的数据</description>
+        <treeSql>
+           select * from (
+			  select t1.xxdm as key,t1.xxmc as title,'0' as select_flag,'' as fid,'' as search_field_key,'1' as icon,0 as pxh  
+			  from ZHXG_XTGL_JCSJ_XXXX t1 where t1.xxdm=(select csz from VC_ZHXG_XTGL_CSSZ where csbz='XTGL_DQXX')
+			  union all
+			  select t.pkid as key,t.bmmc as title,'1' as select_flag,t.sjbmid as fid,'bmid' as search_field_key,'2' as icon,t.pxh as pxh  
+			  from ZHXG_XTGL_JCSJ_BMXX t where t.zt='1'
+			  START WITH sjbmid =(select csz from VC_ZHXG_XTGL_CSSZ where csbz='XTGL_DQXX')
+			  CONNECT BY t.sjbmid = PRIOR pkid
+			) order by pxh
+        </treeSql>
+        <tableSql>
+            select t.jsid,t.gh,t.xm,t.xbm,t.xb,t.sfzjlxm,t.sfzjlx,t.sfzjh,t.bmid,t.bmdm,t.bmmc,t.zzmmm,t.zzmm,t.csrq,t.rzsj 
+            from VC_ZHXG_XGDW_JSJBXX t where t.zt='1'
+        </tableSql>
+    </dataSource>
+    <dataSource id="zhxg_selector_xsxx">
+        <description>学生选择器的数据</description>
+        <treeSql>
+           select * from (
+			  select t1.xxdm as key,t1.xxmc as title,'0' as select_flag,'' as fid,'' as search_field_key,'1' as icon,0 as pxh  
+			  from ZHXG_XTGL_JCSJ_XXXX t1 where t1.xxdm=(select csz from VC_ZHXG_XTGL_CSSZ where csbz='XTGL_DQXX')
+			  union all
+			  select t.pkid as key,t.bmmc as title,'1' as select_flag,t.sjbmid as fid,'yxid' as search_field_key,'1' as icon,t.pxh as pxh  
+			  from ZHXG_XTGL_JCSJ_BMXX t where t.zt='1' and t.bmlb='1'
+			  START WITH sjbmid =(select csz from VC_ZHXG_XTGL_CSSZ where csbz='XTGL_DQXX')
+			  CONNECT BY t.sjbmid = PRIOR pkid
+			  union all
+			  select t.pkid as key,t.zymc as title,'1' as select_flag,t.bmid as fid,'zyid' as search_field_key,'1' as icon,t.pxh as pxh  
+			  from ZHXG_XTGL_JCSJ_ZYXX t where t.zt='1'
+			  union all
+			  select t.pkid as key,t.bjmc as title,'1' as select_flag,t.zyid as fid,'bjid' as search_field_key,'2' as icon,0 as pxh  
+			  from ZHXG_XTGL_JCSJ_BJXX t where t.zt='1'
+			) order by pxh
+        </treeSql>
+        <tableSql>
+           select t.pkid as xsid,t.xh,t.xm,t.sfzjh,t.xqid,xq.xqdm,xq.xqmc,t.bmid as yxid,bm.bmdm as yxdm,bm.bmmc as yxmc
+		                  ,t.zyid,zy.zydm,zy.zymc,t.bjid,bj.bjdm,bj.bjmc,t.xbm,xb.mc as xb 
+		             ,t.xsdqztm,xsdqzt.mc as xsdqzt
+		      from ZHXG_XSXX_XSJBXX t
+		      left join ZHXG_XTGL_JCSJ_XQXX xq on t.xqid = xq.pkid
+		      left join ZHXG_XTGL_JCSJ_BMXX bm on t.bmid = bm.pkid
+		      left join ZHXG_XTGL_JCSJ_ZYXX zy on t.zyid = zy.pkid
+		      left join ZHXG_XTGL_JCSJ_BJXX bj on t.bjid = bj.pkid
+		      left join ZHXG_XTGL_DMK_CL xb on xb.dmbz = 'XTGL_XBM' and t.xbm = xb.dm
+		      left join ZHXG_XTGL_DMK_CL xsdqzt on xsdqzt.dmbz = 'XTGL_XSDQZTM' and t.xsdqztm = xsdqzt.dm
+		      order by t.xh
+        </tableSql>
+    </dataSource>
+    <dataSource id="zhxg_selector_zgx">
+        <description>资格项选择器</description>
+        <tableSql>
+            select t.zgxid,t.zgxmc from ZHXG_ZG_ZGXGL t where t.zgxid not in (select z.zgxid from ZHXG_ZG_ZGXFL_ZGX z where z.flid='#{basic}')
+        </tableSql>
+    </dataSource>
+</dataSources>  

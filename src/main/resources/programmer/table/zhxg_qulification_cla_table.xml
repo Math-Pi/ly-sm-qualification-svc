@@ -1,0 +1,20 @@
+<dataSources>
+    <dataSource>
+        <description>班级资格名单预览</description>
+        <sql>
+            select bj.PKID,bj.BJMC,zy.ZYMC,bm.BMMC,t.pcid,t.fhtj from zhxg_zg_zglsmd t
+			left join zhxg_xtgl_jcsj_bjxx bj on bj.PKID=t.dxid
+			left join ZHXG_XTGL_JCSJ_ZYXX zy on zy.pkid=bj.ZYID
+			left join zhxg_xtgl_jcsj_bmxx bm on bm.PKID=bj.bmid
+			where t.zt = '1'
+        </sql>
+        <!-- <table rowKey="PKID"></table>
+        <columns>
+            <field title="序号" width="60px" dataIndex="ROW_ID" fixed="left"></field>
+            <field title="班级名称" width="140px" dataIndex="BJMC" ></field>
+            <field title="所属专业" minWidth="140px" dataIndex="ZYMC" ></field>
+            <field title="所属学院" minWidth="140px" dataIndex="BMMC"  ></field>
+            <field title="符合条件" minWidth="140px" dataIndex="FHTJ"  ></field>
+        </columns> -->
+    </dataSource>
+</dataSources>

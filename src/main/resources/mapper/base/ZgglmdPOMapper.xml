@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ly.cloud.mapper.base.ZgglmdPOMapper" >
+  	<!-- 以下写查询方法 -->
+  		<!-- 根据对象ID和批次ID查询对象的对象结果数据 -->
+  		<select id="getZgglmdByIdAndPcid" resultType="com.ly.cloud.vo.base.ZgglmdVO">
+  			select t.id,t.pcid,t.bfhtj,t.zt,t.cjsj,t.fhtj from zhxg_zg_zgglmd t where t.id=#{id} and t.pcid=#{pcid}
+  		</select>
+  		
+  		<!-- 根据批次ID返回所有数据 -->
+  		<select id="getAllZgglmdByPcid" resultType="com.ly.cloud.vo.base.ZgglmdVO">
+  			select t.id,t.pcid,t.bfhtj,t.zt,t.cjsj,t.fhtj from zhxg_zg_zgglmd t where t.pcid=#{pcid}
+  		</select>
+  		
+  		<!-- 根据批次ID返回所有符合资格的数据 -->
+  		<select id="getAllFhzgmdByPcid" resultType="com.ly.cloud.vo.base.ZgglmdVO">
+  			select t.id,t.pcid,t.bfhtj,t.zt,t.cjsj,t.fhtj from zhxg_zg_zgglmd t where t.zt='1' and t.pcid=#{pcid}
+  		</select>
+  		
+  		<!-- 根据批次ID返回所有不符合资格的数据 -->
+  		<select id="getAllNofhmdByPcid" resultType="com.ly.cloud.vo.base.ZgglmdVO">
+  			select t.id,t.pcid,t.bfhtj,t.zt,t.cjsj,t.fhtj from zhxg_zg_zgglmd t where t.zt='0' and  t.pcid=#{pcid}
+  		</select>
+  		
+  	<!-- 以下写插入方法 -->
+  	<!-- 项目类型是学生的话把学生信息插入到临时表中先 -->
+  	<insert id="insertPoBySelectStuInfo" parameterType="String">
+  		insert into zhxg_zg_zgglmd (id,pcid,zt,cjsj)
+		select t.pkid,#{quid},'1',sysdate from zhxg_xsxx_xsjbxx t
+		left join zhxg_xtgl_jcsj_bmxx t1 on t1.PKID=t.BMID
+	    left join zhxg_xtgl_jcsj_zyxx t2 on t2.PKID=t.ZYID
+	    left join zhxg_xtgl_jcsj_bjxx t3 on t3.PKID=t.BJID
+	    where nvl(t1.ZT,'1')='1' and  nvl(t2.ZT,'1')='1' and  nvl(t3.ZT,'1')='1'
+		<!--不要在这里加学生状态的过滤，请通过资格项来实现，因为不是所有的资格判断都是基于在读学生的 -->
+  	</insert>
+  	<!-- 项目类型是老师的话把老师信息插入到临时表中 -->
+  	<insert id="insertPoBySelectTeInfo" parameterType="String">
+  		insert into zhxg_zg_zgglmd (id,pcid,zt,cjsj)
+		select t.pkid,#{quid},'1',sysdate from zhxg_xgdw_jsjbxx t 
+		left join zhxg_xtgl_jcsj_bmxx t1 on t1.PKID=t.BMID
+		where nvl(t.ZT,'0')='1' and nvl(t1.ZT,'1')='1' 
+  	</insert>
+  	<!-- 项目类型是班级的话，把班级信息插入临时表中 -->
+  	<insert id="insertPOBySelectBjInfo" parameterType="String">
+  		insert into zhxg_zg_zgglmd (id,pcid,zt,cjsj)
+   		 select t.pkid,#{quid},'1',sysdate from zhxg_xtgl_jcsj_bjxx t
+   		 where nvl(t.ZT,'1')='1' 
+  	</insert>
+  	<!-- 项目类型是学生的话根据学生ID把单个学生信息插入到临时表中先 -->
+  	<insert id="insertPoBySelectStuId" parameterType="String">
+  		insert into zhxg_zg_zgglmd (id,pcid,zt,cjsj)
+		select pkid,#{quid},'1',sysdate from zhxg_xsxx_xsjbxx where pkid=#{id}
+  	</insert>
+  	<!-- 项目类型是老师的话根据老师ID把单个老师信息插入到临时表中 -->
+  	<insert id="insertPoBySelectTeId" parameterType="String">
+  		insert into zhxg_zg_zgglmd (id,pcid,zt,cjsj)
+		select pkid,#{quid},'1',sysdate from zhxg_xgdw_jsjbxx  where pkid=#{id}
+  	</insert>
+  		<!-- 项目类型是班级的话根据班级ID把单个班级信息插入到临时表中 -->
+  	<insert id="insertPoBySelectBjId" parameterType="String">
+  		insert into zhxg_zg_zgglmd (id,pcid,zt,cjsj)
+		select pkid,#{quid},'1',sysdate from zhxg_xtgl_jcsj_bjxx  where pkid=#{id}
+  	</insert>
+  	<!-- 批量插入方法，此方法不要改动否则更新表的时候会被覆盖 -->
+  	<!-- 使用此方法的时候请使用NHMybatisUtils.batchCommit(ZgglmdPOMapper.class,list);进行调用，这主要是为了解决插入数据量多的时候需要分批次插入 -->
+    <insert id="insertPOBatch" parameterType="java.util.List">
+	    insert into ZHXG_ZG_ZGGLMD(ID,PCID,BFHTJ,ZT,CJSJ)
+	        (
+	            <foreach collection="list" item="row" index="index" separator="union all">
+	                (select 
+						#{row.id,jdbcType=VARCHAR},
+						#{row.pcid,jdbcType=VARCHAR},
+						#{row.bfhtj,jdbcType=VARCHAR},
+						#{row.zt,jdbcType=VARCHAR},
+						#{row.cjsj,jdbcType=TIMESTAMP}
+	                   from dual)
+	            </foreach> 
+	        )
+	</insert>
+	<insert id="insertStuInfoBySelect">
+		insert into zhxg_zg_zgglmd (id,pcid,zt,cjsj)
+		select t.pkid,#{pcid},#{zt},sysdate from zhxg_xsxx_xsjbxx t
+		left join zhxg_xtgl_jcsj_bmxx t1 on t1.PKID=t.BMID
+	    left join zhxg_xtgl_jcsj_zyxx t2 on t2.PKID=t.ZYID
+	    left join zhxg_xtgl_jcsj_bjxx t3 on t3.PKID=t.BJID
+	    where nvl(t1.ZT,'1')='1' and  nvl(t2.ZT,'1')='1' and  nvl(t3.ZT,'1')='1'
+		<!--不要在这里加学生状态的过滤，请通过资格项来实现，因为不是所有的资格判断都是基于在读学生的 -->
+	</insert>
+	<insert id="insertTeaInfoBySelect">
+		insert into zhxg_zg_zgglmd (id,pcid,zt,cjsj)
+		select t.pkid,#{pcid},#{zt},sysdate from zhxg_xgdw_jsjbxx t
+		left join zhxg_xtgl_jcsj_bmxx t1 on t1.PKID=t.BMID
+		where nvl(t.ZT,'0')='1' and nvl(t1.ZT,'1')='1'
+	</insert>
+	<insert id="insertClaBySelect">
+		insert into zhxg_zg_zgglmd (id,pcid,zt,cjsj)
+   		select t.pkid,#{pcid},#{zt},sysdate from zhxg_xtgl_jcsj_bjxx t
+   		where nvl(t.ZT,'1')='1'
+	</insert>
+
+	<!-- 以下写更新方法 -->
+  		<update id="updateZgglmd" parameterType="String">
+  			${updateSql}
+  		</update>
+  	<!-- 以下写删除方法 -->
+  	<!-- 把cjsj大于30分钟的数据清空 -->
+  		<delete id="deleteByCjsj">
+  			delete zhxg_zg_zgglmd where (TO_NUMBER(sysdate - cjsj) * 24 * 60)>30
+  		</delete>
+  		
+  		<!-- 根据批次ID删除数据 -->
+  		<delete id="deleteByPcid" parameterType="String">
+  			delete zhxg_zg_zgglmd where pcid=#{pcid}
+  		</delete>
+</mapper>

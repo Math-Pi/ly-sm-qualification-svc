@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ly.cloud.mapper.base.ZgxZgPOMapper" >
+  	<!-- 以下写查询方法 -->
+  	<!-- 以下写插入方法 -->
+  	<!-- 批量插入方法，此方法不要改动否则更新表的时候会被覆盖 -->
+  	<!-- 使用此方法的时候请使用NHMybatisUtils.batchCommit(ZgxZgPOMapper.class,list);进行调用，这主要是为了解决插入数据量多的时候需要分批次插入 -->
+    <insert id="insertPOBatch" parameterType="java.util.List">
+	    insert into ZHXG_ZG_ZGX_ZG(ZGXDYID,ZGID,ZGXID,ZGXDYMC,YSFDM,CSZ,PXH,HCZGXDYID)
+	        (
+	            <foreach collection="list" item="row" index="index" separator="union all">
+	                (select 
+						#{row.zgxdyid,jdbcType=VARCHAR},
+						#{row.zgid,jdbcType=VARCHAR},
+						#{row.zgxid,jdbcType=VARCHAR},
+						#{row.zgxdymc,jdbcType=VARCHAR},
+						#{row.ysfdm,jdbcType=VARCHAR},
+						#{row.csz,jdbcType=VARCHAR},
+						#{row.pxh,jdbcType=DECIMAL},
+						#{row.hczgxdyid,jdbcType=VARCHAR}
+	                   from dual)
+	            </foreach> 
+	        )
+	</insert>
+  	
+  	<!-- 以下写更新方法 -->
+  	
+  	<!-- 以下写删除方法 -->
+  	<delete id="deleteByZgid" >
+  		delete from ZHXG_ZG_ZGX_ZG where ZGID=#{zgid,jdbcType=VARCHAR}
+  	</delete>
+  	<delete id="deleteByZgids" >
+        delete from ZHXG_ZG_ZGX_ZG where ZGID in 
+        <foreach collection="quaIds" open="(" close=")" separator=","  item="quaId">
+            #{quaId}
+        </foreach>
+    </delete>
+    <delete id="deleteMultiByQual" parameterType="java.util.List">
+        delete from ZHXG_ZG_ZGX_ZG where zgxid in 
+        <foreach collection="zgxids" item="zgxid" open="(" close=")" separator=",">
+         #{zgxid}
+        </foreach>
+    </delete>
+</mapper>

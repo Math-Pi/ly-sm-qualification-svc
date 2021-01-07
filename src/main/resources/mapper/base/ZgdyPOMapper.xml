@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ly.cloud.mapper.base.ZgdyPOMapper" >
+  	<!-- 以下写查询方法 -->
+  	<!-- 根据资格ID查询资格所属项目标记 -->
+  		<select id="getSszgmbdmByZgid" resultType="String">
+  			select t.sszgmbdm from zhxg_zg_zgdy t where t.zgid=#{zgid}
+  		</select>
+  	<select id="selectZgxByZgid" resultType="java.util.HashMap">
+  		select t.zgxdyid,t.zgxdymc,t1.sszgmbdm,t2.SJKYH,t1.zgst,t1.zgtjzd,t1.zgtjzdlxdm,t.ysfdm,t.csz,t.hczgxdyid,t.zgxid,t1.yhtsxx,t1.yhtszd
+		from ZHXG_ZG_ZGX_ZG t
+		join ZHXG_ZG_ZGXGL t1 on t1.zgxid=t.zgxid
+		join ZHXG_FWGL_HDFWLB t2 on t2.PKID=t1.hdfwid
+		where t.zgid=#{zgid} order by t.pxh asc
+  	</select>
+  	<!-- 根据资格项ID获取资格项对应的资格条件 -->
+  	<select id="selectZgxByZgxid" resultType="java.util.HashMap" flushCache="true" useCache="false">
+  		select t.sszgmbdm,t1.SJKYH,t.zgst,t.zgtjzd,t.zgtjzdlxdm,t.zgxid,t.yhtsxx,t.yhtszd from ZHXG_ZG_ZGXGL t
+    	join ZHXG_FWGL_HDFWLB t1 on t1.PKID=t.hdfwid
+   		 where t.zgxid=#{zgxid}
+  	</select>
+  	<select id="selectAllZgxByZgxid" resultType="com.ly.cloud.vo.base.ZgxZgVO">
+  		select t1.zgid,t1.zgxdyid,t1.zgxid,t1.zgxdymc,t1.ysfdm,t1.csz,t1.hczgxdyid,t1.pxh from ZHXG_ZG_ZGX_ZG t1  where t1.zgid=#{zgid}
+  	</select>
+  	<!-- 获取所属学校代码 -->
+  	<select id="selectDqxxInfo" resultType="String">
+  		select csz from VC_ZHXG_XTGL_CSSZ t where t."CSBZ"='XTGL_DQXX'
+  	</select>
+  	<!-- 根据分类代码和目标代码查询资格项信息 -->
+  	<select id="selectZgxByFlmAndMbdm" resultType="com.ly.cloud.vo.base.ZgxLxVO">
+  		select distinct t2.zgxid,t2.zgxmc,t2.zgtjzd,t2.zgst,t2.zgtjzdlxdm,t2.xlkbz,t3.jkqz from zhxg_zg_zgxfl_zgx t
+		left join zhxg_xtgl_dmk_fwfl t1 on t1.pkid=t.flid
+		left join zhxg_zg_zgxgl t2 on t2.zgxid=t.zgxid
+		left join ZHXG_FWGL_HDFWLB t3 on t3.pkid=t2.hdfwid
+		where   t1.fldm=#{flbz} and t2.sszgmbdm=#{mbdm} and (t1.fdm ='10000' or t1.fdm=#{fdm})
+		<if test="tagList != null and tagList.size() > 0">
+			union
+			select distinct t5.zgxid,t5.zgxmc,t5.zgtjzd,t5.zgst,t5.zgtjzdlxdm,t5.xlkbz,t6.jkqz from zhxg_zg_zgxbq_gx t4 left join zhxg_zg_zgxgl t5 on t5.zgxid=t4.zgxid
+			left join ZHXG_FWGL_HDFWLB t6 on t6.pkid=t5.hdfwid
+			where t4.bqbz in
+			<foreach collection="tagList" item="tag" close=")" open="(" separator=",">
+				#{tag}
+			</foreach>
+		</if>
+  	</select>
+  	<!-- 以下写插入方法 -->
+  	<!-- 批量插入方法，此方法不要改动否则更新表的时候会被覆盖 -->
+  	<!-- 使用此方法的时候请使用NHMybatisUtils.batchCommit(ZgdyPOMapper.class,list);进行调用，这主要是为了解决插入数据量多的时候需要分批次插入 -->
+    <insert id="insertPOBatch" parameterType="java.util.List">
+	    insert into ZHXG_ZG_ZGDY(ZGID,ZGMC,SSZGMBDM)
+	        (
+	            <foreach collection="list" item="row" index="index" separator="union all">
+	                (select 
+						#{row.zgid,jdbcType=VARCHAR},
+						#{row.zgmc,jdbcType=VARCHAR},
+						#{row.sszgmbdm,jdbcType=VARCHAR}
+	                   from dual)
+	            </foreach> 
+	        )
+	</insert>
+  	
+  	<!-- 以下写更新方法 -->
+  	
+  	<!-- 以下写删除方法 -->
+  	
+</mapper>

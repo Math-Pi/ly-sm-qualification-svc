@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ly.cloud.mapper.base.JtzglPOMapper" >
+  	<!-- 以下写查询方法 -->
+  	
+  	<!-- 以下写插入方法 -->
+  	<!-- 批量插入方法，此方法不要改动否则更新表的时候会被覆盖 -->
+  	<!-- 使用此方法的时候请使用NHMybatisUtils.batchCommit(JtzglPOMapper.class,list);进行调用，这主要是为了解决插入数据量多的时候需要分批次插入 -->
+    <insert id="insertPOBatch" parameterType="java.util.List">
+	    insert into ZHXG_ZG_JTZGL(JTZID,YSZMC,ZLXDM,ZHQFSDM,CSZ,MS)
+	        (
+	            <foreach collection="list" item="row" index="index" separator="union all">
+	                (select 
+						#{row.jtzid,jdbcType=VARCHAR},
+						#{row.yszmc,jdbcType=VARCHAR},
+						#{row.zlxdm,jdbcType=VARCHAR},
+						#{row.zhqfsdm,jdbcType=VARCHAR},
+						#{row.csz,jdbcType=VARCHAR},
+						#{row.ms,jdbcType=VARCHAR}
+	                   from dual)
+	            </foreach> 
+	        )
+	</insert>
+  	
+  	<!-- 以下写更新方法 -->
+  	
+  	<!-- 以下写删除方法 -->
+  	
+</mapper>

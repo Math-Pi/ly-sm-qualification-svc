@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ly.cloud.mapper.base.ZgxflZgxPOMapper" >
+  	<!-- 以下写查询方法 -->
+  	<select id="queryDetail" parameterType="java.lang.String" resultType="com.ly.cloud.vo.classification.ClassificationDetailVO">
+        select zgx.flid,t.FLDM, t.FLMC, xxmc, t.FDM, nvl(zgxnum,0) as zgxnum from (select zgx.flid, count(zgx.flid) as zgxnum from ZHXG_ZG_ZGXFL_ZGX zgx group by zgx.flid) zgx
+		left join ZHXG_XTGL_DMK_FWFL t on zgx.flid=t.PKID
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = t.FDM
+		where t.FLDM = #{fldm}
+		order by t.fdm
+    
+    </select>
+    
+    <select id="queryClassification" parameterType="java.util.Map" resultType="java.lang.String">
+         select t.pkid from ZHXG_XTGL_DMK_FWFL t where t.fdm=#{param.xxdm} and t.fldm=#{param.fldm}
+    </select>
+    
+    <select id="deleteQualificationsByMulti" parameterType="java.util.List" resultType="java.lang.String">
+        select pkid from ZHXG_XTGL_DMK_FWFL t where t.FLDM in 
+        <foreach collection="fldms" item="item" index="no" open="("
+            separator="," close=")">
+            #{item}
+         </foreach>
+    </select>
+  	<!-- 以下写插入方法 -->
+  	<!-- 批量插入方法，此方法不要改动否则更新表的时候会被覆盖 -->
+  	<!-- 使用此方法的时候请使用NHMybatisUtils.batchCommit(ZgxflZgxPOMapper.class,list);进行调用，这主要是为了解决插入数据量多的时候需要分批次插入 -->
+    <insert id="insertPOBatch" parameterType="java.util.List">
+	    insert into ZHXG_ZG_ZGXFL_ZGX(PKID,ZGXID,FLID)
+	        (
+	            <foreach collection="list" item="row" index="index" separator="union all">
+	                (select 
+						#{row.pkid,jdbcType=VARCHAR},
+						#{row.zgxid,jdbcType=VARCHAR},
+						#{row.flid,jdbcType=VARCHAR}
+	                   from dual)
+	            </foreach> 
+	        )
+	</insert>
+	
+  	<insert id="insertMulti" parameterType="java.util.List">
+        insert into ZHXG_ZG_ZGXFL_ZGX(PKID,ZGXID,FLID)
+            (
+                <foreach collection="list" item="row" index="index" separator="union all">
+                    (select 
+                        #{row.pkid,jdbcType=VARCHAR},
+                        #{row.zgxid,jdbcType=VARCHAR},
+                        #{row.flid,jdbcType=VARCHAR}
+                       from dual)
+                </foreach> 
+            )
+    </insert>
+  	<!-- 以下写更新方法 -->
+  	
+  	<!-- 以下写删除方法 -->
+  	<delete id="deleteByMultiFlid" parameterType="java.util.List" >
+       DELETE FROM ZHXG_ZG_ZGXFL_ZGX WHERE flid in 
+        <foreach collection="flids" item="item" index="no" open="("
+            separator="," close=")">
+            #{item}
+         </foreach>
+    </delete>
+    <delete id="deleteMultiByQual" parameterType="java.util.List">
+        delete from ZHXG_ZG_ZGXFL_ZGX where zgxid in 
+        <foreach collection="zgxids" item="zgxid" open="(" close=")" separator=",">
+         #{zgxid}
+        </foreach>
+    </delete>
+    
+</mapper>

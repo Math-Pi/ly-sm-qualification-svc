@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSources>
+    <dataSource>
+        <description>资格项选择器</description>
+        <tableSql>
+            select t.zgxid,t.zgxmc from ZHXG_ZG_ZGXGL t where t.zgxid not in (select z.zgxid from ZHXG_ZG_ZGXFL_ZGX z where z.flid='#{basic}')
+        </tableSql>
+        <selector
+        	title="资格项选择器"
+        	mode="table"
+        	tableWidth="600"
+        	resultWidth="150"
+        	height="500"
+        	keyField="ZGXID"
+        	titleField="ZGXMC"
+        	searchField="ZGXMC"
+        	searchWidth="320"
+        	placeholder="请输入资格项名称"
+        ></selector>
+        <columns>
+        	<field key="ROW_ID" title="序号" width="40"></field>
+        	<field key="ZGXMC" title="资格项" minWidth="100" sorted="false"></field>
+        </columns>
+    </dataSource>
+</dataSources>  

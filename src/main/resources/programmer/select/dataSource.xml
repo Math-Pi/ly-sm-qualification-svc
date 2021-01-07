@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<dataSources>  
+    <dataSource id="zhxg_zgjd_jtzlx_select">  
+        <description>静态值类型下拉框</description>  
+        <sql>  
+           select t.DM as value, t.MC as label
+			  from ZHXG_XTGL_DMK_CL t, ZHXG_XTGL_DMK_FL f
+			 where f.DMBZ = 'ZGJD_ZLXDM'
+			   and f.PKID = t.FLID
+			   and t.ZT=1
+         </sql>  
+    </dataSource>
+    <dataSource id="zhxg_zgjd_zhqfs_select">  
+        <description>值获取方式下拉框</description>  
+        <sql>  
+           select t.DM as value, t.MC as label
+              from ZHXG_XTGL_DMK_CL t, ZHXG_XTGL_DMK_FL f
+             where f.DMBZ = 'ZGJD_ZHQFSDM'
+               and f.PKID = t.FLID
+               and t.ZT=1
+         </sql>  
+    </dataSource>
+    <dataSource id="zhxg_zgjd_zgxfl_select">
+        <description>查询资格分类父代码对应的学校</description>
+        <sql>
+            select x.XXDM as value, x.XXMC as label
+			  from ZHXG_XTGL_JCSJ_XXXX x
+        </sql>
+    </dataSource>
+    <dataSource id="zhxg_zgjd_sszgmb_select">  
+        <description>所属资格目标下拉框</description>  
+        <sql>  
+           select c.dm as value,c.mc as label from  ZHXG_XTGL_DMK_Fl f
+			left join ZHXG_XTGL_DMK_CL c on c.FLID=f.PKID and c.ZT=1
+			where f.DMBZ='ZGJD_SSZGMBDM'
+        </sql>  
+    </dataSource>
+    <dataSource id="zhxg_zgjd_zgtjzdlx_select">  
+        <description>资格条件字段类型下拉框</description>  
+        <sql>  
+           select c.dm as value,c.mc as label from  ZHXG_XTGL_DMK_Fl f
+			left join ZHXG_XTGL_DMK_CL c on c.FLID=f.PKID and c.ZT=1
+			where f.DMBZ='ZGJD_ZGTJZDLXDM'
+        </sql>  
+    </dataSource>
+    <dataSource id="zhxg_zgjd_ysf_select">  
+        <description>运算符下拉框</description>  
+        <sql>  
+           select c.dm as value,c.mc as label from  ZHXG_XTGL_DMK_Fl f
+			left join ZHXG_XTGL_DMK_CL c on c.FLID=f.PKID and c.ZT=1
+			where f.DMBZ='ZGJD_YSFDM'
+        </sql>  
+    </dataSource>
+    <dataSource id="zhxg_zgjd_zhqgz_select">  
+        <description>值获取规则下拉框</description>  
+        <sql>  
+           select c.dm as value,c.mc as label from  ZHXG_XTGL_DMK_Fl f
+			left join ZHXG_XTGL_DMK_CL c on c.FLID=f.PKID and c.ZT=1
+			where f.DMBZ='ZGJD_ZHQGZDM'
+        </sql>  
+    </dataSource>
+    <dataSource id="zhxg_zgjd_zdlx_select">  
+        <description>字段类型下拉框</description>  
+        <sql>  
+			select c.dm as value,c.mc as label from  ZHXG_XTGL_DMK_Fl f
+			left join ZHXG_XTGL_DMK_CL c on c.FLID=f.PKID and c.ZT=1
+			where f.DMBZ='ZGJD_ZDLX'
+        </sql>  
+    </dataSource>
+    <dataSource id="zhxg_zgjd_ptcs_select">  
+        <description>平台参数下拉框</description>  
+        <sql>  
+			select c.dm as value,c.mc as label from  ZHXG_XTGL_DMK_Fl f
+			left join ZHXG_XTGL_DMK_CL c on c.FLID=f.PKID and c.ZT=1
+			where f.DMBZ='ZGJD_PTCS'
+        </sql>  
+    </dataSource>
+    <dataSource id="zhxg_zgjd_jtz_select">
+        <description>静态值下拉框</description>
+        <sql>
+			select jtzid as value,yszmc as label from ZHXG_ZG_JTZGL
+        </sql>
+    </dataSource>
+    <dataSource id="zhxg_zgjd_service_name">
+        <description>服务名称</description>
+        <sql>
+            select distinct t.fldm as value, t.flmc as label from ZHXG_XTGL_DMK_FWFL t
+        </sql>
+    </dataSource>
+</dataSources>  

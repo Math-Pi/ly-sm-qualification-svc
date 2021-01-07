@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSources>
+    <dataSource id="zhxg_zgjd_jtzgl_table">  
+        <description>静态值管理列表查询</description>  
+        <sql>  
+           select t.jtzid, t.yszmc, c.MC as zlxmc, c2.MC as zhqfsmc, t.csz, t.ms
+			  from ZHXG_ZG_JTZGL t
+			  left join ZHXG_XTGL_DMK_FL f
+			    on f.DMBZ = 'ZGJD_ZLXDM'
+			  left join ZHXG_XTGL_DMK_CL c
+			    on c.FLID = f.PKID
+			   and c.DM = t.zlxdm
+			   and c.ZT=1
+			  left join ZHXG_XTGL_DMK_FL f2
+			    on f2.DMBZ = 'ZGJD_ZHQFSDM'
+			  left join ZHXG_XTGL_DMK_CL c2
+			    on c2.FLID = f2.PKID
+			   and c2.DM = t.zhqfsdm
+			   and c2.ZT=1
+         </sql>  
+    </dataSource> 
+    
+    <dataSource id="zhxg_zgjd_zgxflglzgx_table">
+        <description>资格项分类管理资格项详情</description>
+        <sql>
+            select zgx.pkid,
+             zgx.zgxid,
+             zgx.flid,
+             zgxgl.zgxmc,
+             h.WFWMC      as SSFW,
+             zgxgl.zgst,
+             zgxgl.zgtjzd,
+             c1.MC        as sszgmb,
+             c2.MC        as zgtjzdlx,
+             fwfl.FLDM,
+             fwfl.FDM     as xxdm,
+             xxxx.XXMC as xxmc,
+             zgxgl.ms
+        from ZHXG_ZG_ZGXFL_ZGX zgx
+        left join ZHXG_ZG_ZGXGL zgxgl
+          on zgxgl.zgxid = zgx.zgxid
+        left join ZHXG_XTGL_DMK_Fl f1
+          on f1.DMBZ = 'ZGJD_SSZGMBDM'
+        left join ZHXG_XTGL_DMK_CL c1
+          on c1.FLID = f1.PKID
+         and c1.DM = zgxgl.sszgmbdm
+         and c1.ZT = 1
+        left join ZHXG_XTGL_DMK_Fl f2
+          on f2.DMBZ = 'ZGJD_ZGTJZDLXDM'
+        left join ZHXG_XTGL_DMK_CL c2
+          on c2.FLID = f2.PKID
+         and c2.DM = zgxgl.zgtjzdlxdm
+         and c2.ZT = 1
+        left join ZHXG_FWGL_HDFWLB h
+          on h.PKID = zgxgl.hdfwid
+        left join ZHXG_XTGL_DMK_FWFL fwfl
+          on fwfl.PKID = zgx.flid
+        left join ZHXG_XTGL_JCSJ_XXXX xxxx
+                on xxxx.XXDM = fwfl.FDM 
+        where not ( zgx.flid = '#{basicflid}' and zgx.zgxid in (select t.zgxid from ZHXG_ZG_ZGXFL_ZGX t where t.flid='#{currentflid}')) and zgx.flid in ('#{currentflid}','#{basicflid}')
+          order by xxdm desc
+
+        </sql>
+    </dataSource>
+    <dataSource id="zhxg_zgjd_zgxfl_table">
+        <description>资格项分类管理卡片数据</description>
+        <sql>
+            select t.FLDM, t.FLMC, xxmc, t.FDM, nvl(zgxnum,0) as zgxnum from ZHXG_XTGL_DMK_FWFL t
+            left join (select zgx.flid, count(zgx.flid) as zgxnum from ZHXG_ZG_ZGXFL_ZGX zgx group by zgx.flid) zgx  on zgx.flid=t.PKID
+            left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = t.FDM
+            order by t.pxh, t.fdm 
+        </sql>
+    </dataSource>
+
+    <dataSource id="zhxg_zgjd_zgxgl_table">
+        <description>资格项管理查询</description>
+        <sql>
+            select z.zgxid  as pkid,
+            z.zgxmc,
+            z.zgst,
+            c1.mc    as sszgmb,
+            h.wfwmc  as ssfw,
+            z.zgtjzd,
+            c2.mc    as zgtjzdlx,
+            z.ms,
+            t.tags
+            from ZHXG_ZG_ZGXGL z
+            left join ZHXG_XTGL_DMK_Fl f1
+            on f1.DMBZ = 'ZGJD_SSZGMBDM'
+            left join ZHXG_XTGL_DMK_CL c1
+            on c1.FLID = f1.PKID
+            and c1.DM = z.sszgmbdm
+            and c1.ZT = 1
+            left join ZHXG_XTGL_DMK_Fl f2
+            on f2.DMBZ = 'ZGJD_ZGTJZDLXDM'
+            left join ZHXG_XTGL_DMK_CL c2
+            on c2.FLID = f2.PKID
+            and c2.DM = z.zgtjzdlxdm
+            and c2.ZT = 1
+            left join ZHXG_FWGL_HDFWLB h
+            on h.PKID = z.hdfwid
+            left join (select zgxid,
+            LISTAGG(bqmc, ',') within group(order by bqmc) as tags
+            from (select distinct t.zgxid, t1.bqmc
+            from ZHXG_ZG_ZGXBQ_GX t
+            left join zhxg_zg_zgx_bq t1
+            on t.bqbz = t1.bqbz
+            group by t.zgxid, t1.bqmc)
+            group by zgxid) t
+            on t.zgxid = z.zgxid
+        </sql>
+    </dataSource>
+</dataSources>  

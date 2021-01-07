@@ -1,0 +1,25 @@
+<dataSources>
+    <dataSource>
+        <description>学生资格名单预览</description>
+        <sql>
+            select xs.PKID,xs.XH,xs.XM,xb.mc as xb,bj.bjmc,zy.ZYMC,bm.BMMC, t.pcid,t.fhtj from zhxg_zg_zglsmd t
+			left join zhxg_xsxx_xsjbxx xs on t.dxid=xs.PKID
+			left join zhxg_xtgl_dmk_cl xb on xb.dmbz = 'XTGL_XBM' and xs.xbm = xb.dm
+			left join ZHXG_XTGL_JCSJ_BJXX bj on bj.PKID=xs.BJID
+			left join ZHXG_XTGL_JCSJ_ZYXX zy on zy.pkid=xs.ZYID
+			left join zhxg_xtgl_jcsj_bmxx bm on bm.PKID=xs.bmid
+			where t.zt = '1'
+        </sql>
+        <!-- <table rowKey="PKID"></table>
+        <columns>
+            <field title="序号" width="60px" dataIndex="ROW_ID" fixed="left"></field>
+            <field title="学号" width="120px" dataIndex="XH" ></field>
+            <field title="姓名" width="90px" dataIndex="XM" ></field>
+            <field title="性别" width="80px" dataIndex="XB" ></field>
+            <field title="班级" minWidth="140px" dataIndex="BJMC" ></field>
+            <field title="专业" minWidth="140px" dataIndex="ZYMC" ></field>
+            <field title="学院" minWidth="140px" dataIndex="BMMC"  ></field>
+            <field title="符合条件" minWidth="140px" dataIndex="FHTJ"  ></field>
+        </columns> -->
+    </dataSource>
+</dataSources>

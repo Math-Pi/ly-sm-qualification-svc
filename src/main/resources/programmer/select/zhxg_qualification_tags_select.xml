@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSources>
+    <dataSource>
+        <description>标签下拉框</description>
+        <sql>
+            select t.bqbz as value, t.bqmc as label
+            from zhxg_zg_zgx_bq t
+        </sql>
+    </dataSource>
+</dataSources>

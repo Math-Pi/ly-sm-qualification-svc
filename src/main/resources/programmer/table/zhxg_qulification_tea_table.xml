@@ -1,0 +1,21 @@
+<dataSources>
+    <dataSource>
+        <description>教师资格名单预览</description>
+        <sql>
+            select js.PKID,js.GH,js.XM,xb.MC as xb,bm.BMMC,t.pcid,t.fhtj from zhxg_zg_zglsmd t
+			left join zhxg_xgdw_jsjbxx js on t.dxid=js.PKID
+			left join zhxg_xtgl_dmk_cl xb on xb.dmbz = 'XTGL_XBM' and js.xbm = xb.dm
+			left join zhxg_xtgl_jcsj_bmxx bm on bm.PKID=js.bmid
+			where t.zt = '1'
+        </sql>
+       <!--  <table rowKey="PKID"></table>
+        <columns>
+            <field title="序号" width="60px" dataIndex="ROW_ID" fixed="left"></field>
+            <field title="工号" width="120px" dataIndex="GH" ></field>
+            <field title="姓名" width="90px" dataIndex="XM" ></field>
+            <field title="性别" width="80px" dataIndex="XB" ></field>
+            <field title="学院" minWidth="140px" dataIndex="BMMC"  ></field>
+            <field title="符合条件" minWidth="140px" dataIndex="FHTJ"  ></field>
+        </columns> -->
+    </dataSource>
+</dataSources>

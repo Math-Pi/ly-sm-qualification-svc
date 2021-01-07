@@ -1,0 +1,8 @@
+<dataSources>
+    <dataSource>
+        <description>资格项标签管理</description>
+        <sql>
+            select t.pkid,t.bqbz,t.bqmc from zhxg_zg_zgx_bq t
+        </sql>
+    </dataSource>
+</dataSources>

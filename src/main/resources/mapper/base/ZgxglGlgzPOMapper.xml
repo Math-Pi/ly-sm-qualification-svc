@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ly.cloud.mapper.base.ZgxglGlgzPOMapper" >
+  	<!-- 以下写查询方法 -->
+  	<select id="selectByZgid" resultType="java.util.HashMap">
+  		select t.glgzid,t.glgzmc, t.zgxid,t.zd, t.ysfdm, t.zhqgzdm,t.csz, t.hcglgzid,t.zdlxdm ,t1.csz as jtz 
+		from ZHXG_ZG_ZGXGL_GLGZ t
+		left join zhxg_zg_jtzgl t1 on t1.jtzid=t.csz
+		where t.zgxid in (
+		      select t2.zgxid from ZHXG_ZG_ZGX_ZG t2 where t2.zgid=#{zgid,jdbcType=VARCHAR}
+		)
+  	</select>
+
+	<select id="selectFwName" resultType="java.lang.String">
+  		select distinct t.flmc from ZHXG_XTGL_DMK_FWFL t where t.fldm =#{ssfw}
+  	</select>
+
+	<select id="selectSchoolName" resultType="java.lang.String">
+  		select x.XXMC from ZHXG_XTGL_JCSJ_XXXX x where x.XXDM=#{xxdm}
+  	</select>
+  	<select id="selectStList" resultType="java.lang.String">
+  		select distinct zg.zgst from ZHXG_ZG_ZGXGL zg
+		left join ZHXG_ZG_ZGXFL_ZGX zgx on zgx.zgxid=zg.zgxid
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm} and fwfl.FLDM=#{ssfw} and zg.zgst is not null
+  	</select>
+  	<select id="selectStListOnly" resultType="java.lang.String">
+  		select distinct zg.zgst from ZHXG_ZG_ZGXGL zg
+		left join ZHXG_ZG_ZGXFL_ZGX zgx on zgx.zgxid=zg.zgxid
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm} and zg.zgst is not null
+  	</select>
+  	
+  	<!-- 根据资格项ID获取资格项对应的过滤规则 -->
+  	<select id="selectByZgxid" resultType="java.util.HashMap">
+  		select t.glgzid,t.glgzmc, t.zgxid,t.zd, t.ysfdm, t.zhqgzdm,t.csz, t.hcglgzid,t.zdlxdm ,t1.csz as jtz 
+		from ZHXG_ZG_ZGXGL_GLGZ t
+		left join zhxg_zg_jtzgl t1 on t1.jtzid=t.csz
+		where t.zgxid =#{zgxid}
+  	</select>
+  	<select id="selectPkid" resultType="java.lang.String">
+  		select glgzid from ZHXG_ZG_ZGXGL_GLGZ where zgxid=#{zgxid}
+  	</select>
+
+	<select id="selectZgxList" resultType="com.ly.cloud.vo.base.ZgxflZgxVO">
+  		select zgx.* from ZHXG_ZG_ZGXFL_ZGX zgx
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm} and fwfl.FLDM=#{ssfw}
+  	</select>
+
+	<select id="selectZgList" resultType="com.ly.cloud.vo.base.ZgxglVO">
+  		select zg.* from ZHXG_ZG_ZGXGL zg
+		left join ZHXG_ZG_ZGXFL_ZGX zgx on zgx.zgxid=zg.zgxid
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm} and fwfl.FLDM=#{ssfw}
+  	</select>
+
+	<select id="selectGlgzList" resultType="com.ly.cloud.vo.base.ZgxglGlgzVO">
+  		select glgz.* from ZHXG_ZG_ZGXGL_GLGZ glgz
+		left join ZHXG_ZG_ZGXFL_ZGX zgx on zgx.zgxid=glgz.zgxid
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm} and fwfl.FLDM=#{ssfw}
+  	</select>
+
+	<select id="selectZgxzgList" resultType="com.ly.cloud.vo.base.ZgxZgVO">
+  		select zgxzg.* from ZHXG_ZG_ZGX_ZG zgxzg
+		left join ZHXG_ZG_ZGXFL_ZGX zgx on zgx.zgxid=zgxzg.zgxid
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm} and fwfl.FLDM=#{ssfw}
+  	</select>
+
+	<select id="selectZgdyList" resultType="com.ly.cloud.vo.base.ZgdyVO">
+  		select distinct zgdy.* from ZHXG_ZG_ZGDY zgdy
+		left join ZHXG_ZG_ZGX_ZG zgxzg on zgxzg.zgid=zgdy.zgid
+		left join ZHXG_ZG_ZGXFL_ZGX zgx on zgx.zgxid=zgxzg.zgxid
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm} and fwfl.FLDM=#{ssfw}
+  	</select>
+  	
+  	
+  	<select id="selectZgxListOnly" resultType="com.ly.cloud.vo.base.ZgxflZgxVO">
+  		select zgx.* from ZHXG_ZG_ZGXFL_ZGX zgx
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm}
+  	</select>
+
+	<select id="selectZgListOnly" resultType="com.ly.cloud.vo.base.ZgxglVO">
+  		select zg.* from ZHXG_ZG_ZGXGL zg
+		left join ZHXG_ZG_ZGXFL_ZGX zgx on zgx.zgxid=zg.zgxid
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm}
+  	</select>
+
+	<select id="selectGlgzListOnly" resultType="com.ly.cloud.vo.base.ZgxglGlgzVO">
+  		select glgz.* from ZHXG_ZG_ZGXGL_GLGZ glgz
+		left join ZHXG_ZG_ZGXFL_ZGX zgx on zgx.zgxid=glgz.zgxid
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm}
+  	</select>
+
+	<select id="selectZgxzgListOnly" resultType="com.ly.cloud.vo.base.ZgxZgVO">
+  		select zgxzg.* from ZHXG_ZG_ZGX_ZG zgxzg
+		left join ZHXG_ZG_ZGXFL_ZGX zgx on zgx.zgxid=zgxzg.zgxid
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm}
+  	</select>
+
+	<select id="selectZgdyListOnly" resultType="com.ly.cloud.vo.base.ZgdyVO">
+  		select distinct zgdy.* from ZHXG_ZG_ZGDY zgdy
+		left join ZHXG_ZG_ZGX_ZG zgxzg on zgxzg.zgid=zgdy.zgid
+		left join ZHXG_ZG_ZGXFL_ZGX zgx on zgx.zgxid=zgxzg.zgxid
+		left join ZHXG_XTGL_DMK_FWFL fwfl on fwfl.PKID = zgx.flid
+		left join ZHXG_XTGL_JCSJ_XXXX xxxx on xxxx.XXDM = fwfl.FDM
+		where xxxx.XXDM=#{xxdm}
+  	</select>
+
+	<select id="selectJtzList" resultType="com.ly.cloud.vo.base.JtzglVO">
+  		select * from ZHXG_ZG_JTZGL
+  	</select>
+	<select id="selectView" resultType="java.util.HashMap">  
+	    select t.OWNER,t.view_name as name,t.text_vc as text from all_views t 
+	    <where>  
+		    t.view_name in  
+		    <foreach collection="stList" item="viewName" open="(" close=")" separator=",">  
+		    #{viewName}  
+		    </foreach>  
+	    </where>  
+  	</select>
+  	<!-- 以下写插入方法 -->
+  	<!-- 批量插入方法，此方法不要改动否则更新表的时候会被覆盖 -->
+  	<!-- 使用此方法的时候请使用NHMybatisUtils.batchCommit(ZgxglGlgzPOMapper.class,list);进行调用，这主要是为了解决插入数据量多的时候需要分批次插入 -->
+    <insert id="insertPOBatch" parameterType="java.util.List">
+	    insert into ZHXG_ZG_ZGXGL_GLGZ(GLGZID,GLGZMC,ZGXID,ZD,YSFDM,ZHQGZDM,CSZ,HCGLGZID,ZDLXDM)
+	        (
+	            <foreach collection="list" item="row" index="index" separator="union all">
+	                (select 
+						#{row.glgzid,jdbcType=VARCHAR},
+						#{row.glgzmc,jdbcType=VARCHAR},
+						#{row.zgxid,jdbcType=VARCHAR},
+						#{row.zd,jdbcType=VARCHAR},
+						#{row.ysfdm,jdbcType=VARCHAR},
+						#{row.zhqgzdm,jdbcType=VARCHAR},
+						#{row.csz,jdbcType=VARCHAR},
+						#{row.hcglgzid,jdbcType=VARCHAR},
+						#{row.zdlxdm,jdbcType=VARCHAR}
+	                   from dual)
+	            </foreach> 
+	        )
+	</insert>
+  	
+  	<!-- 以下写更新方法 -->
+	<update id="updatePOBatch" parameterType="java.util.List" >
+         <foreach collection="list" item="row" open="begin" close=";end;" separator=";">
+             update ZHXG_ZG_ZGXGL_GLGZ set
+             glgzmc = #{row.glgzmc,jdbcType=VARCHAR},
+             zgxid = #{row.zgxid,jdbcType=VARCHAR},
+             zd = #{row.zd,jdbcType=VARCHAR},
+             ysfdm = #{row.ysfdm,jdbcType=VARCHAR},
+             zhqgzdm = #{row.zhqgzdm,jdbcType=VARCHAR},
+             csz = #{row.csz,jdbcType=VARCHAR},
+             hcglgzid = #{row.hcglgzid,jdbcType=VARCHAR},
+             zdlxdm = #{row.zdlxdm,jdbcType=VARCHAR}
+             where glgzid = #{row.glgzid,jdbcType=VARCHAR}   
+         </foreach>
+    </update>
+  	<update id="updateHc">
+  		update ZHXG_ZG_ZGXGL_GLGZ set hcglgzid=#{hcglgzid} where glgzid=#{glgzid}
+  	</update>
+  	<!-- 以下写删除方法 -->
+  	<delete id="deleteMultiByQual" parameterType="java.util.List">
+  	    delete from ZHXG_ZG_ZGXGL_GLGZ where zgxid in 
+  	    <foreach collection="zgxids" item="zgxid" open="(" close=")" separator=",">
+  	     #{zgxid}
+  	    </foreach>
+  	</delete>
+</mapper>

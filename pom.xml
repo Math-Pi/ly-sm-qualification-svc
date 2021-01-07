@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<!-- 应用父pom的配置 -->
+	<parent>
+		<groupId>com.ly.cloud</groupId>
+		<artifactId>ly-cloud</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>ly-sm-qualification-svc</artifactId>
+	
+	<dependencies>
+		<!-- 基础jar包 -->
+		<dependency>
+			<groupId>com.ly.cloud</groupId>
+			<artifactId>ly-cloud-mybatis-plus</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.baomidou</groupId>
+					<artifactId>mybatis-plus-generate</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.ly.cloud</groupId>
+			<artifactId>mybatis-plus-generate</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ly.cloud</groupId>
+			<artifactId>ly-cloud-common</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>dom4j</groupId>
+		    <artifactId>dom4j</artifactId>
+		    <version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ly.cloud</groupId>
+			<artifactId>ly-zhxg-components-svc</artifactId>
+			<version>LATEST</version>
+		</dependency> 
+	    
+	    <!-- groovy动态执行代码 -->
+		<dependency>
+		    <groupId>org.codehaus.groovy</groupId>
+		    <artifactId>groovy-all</artifactId>
+		</dependency>
+		
+		 <!-- easypoi依赖 -->  
+        <dependency>  
+            <groupId>cn.afterturn</groupId>  
+            <artifactId>easypoi-base</artifactId>  
+            <version>3.2.0</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>cn.afterturn</groupId>  
+            <artifactId>easypoi-web</artifactId>  
+            <version>3.2.0</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>cn.afterturn</groupId>  
+            <artifactId>easypoi-annotation</artifactId>  
+            <version>3.2.0</version>  
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>ooxml-schemas</artifactId>
+            <version>1.3</version>
+        </dependency>
+	    
+		<!-- 引用服务 -->  
+        <dependency>  
+            <groupId>org.springframework.cloud</groupId>  
+            <artifactId>spring-cloud-starter-hystrix</artifactId>  
+        </dependency>  
+        <dependency>  
+            <groupId>org.springframework.cloud</groupId>  
+            <artifactId>spring-cloud-starter-feign</artifactId>  
+        </dependency>
+        <dependency>  
+		    <groupId>com.ly.mssp</groupId>  
+		    <artifactId>ly-zhxg-utils</artifactId>  
+		    <version>2.0.11</version>  
+		</dependency>
+        <!-- flyway 配置 --> 
+        <!-- <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency> -->
+	</dependencies>
+	
+	<repositories>
+        <repository>
+            <id>public</id>
+            <name>public</name>
+            <url>http://192.168.30.58:8081/repository/public/</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>public</id>
+            <name>public</name>
+            <url>http://192.168.30.58:8081/repository/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+	
+	<build>
+		<plugins>
+			<!-- 配置spring boot maven插件，把项目打包成可运行的jar包 -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- 命令：mybatis-generator:generate -->
+			<plugin>
+				<groupId>org.mybatis.generator</groupId>
+				<artifactId>mybatis-generator-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- 依赖Dockerfile构建命令：mvn clean package docker:build -->
+			<!-- mvn clean package -DskipTests=true docker:build -->
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

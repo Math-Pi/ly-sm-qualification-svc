@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ly.cloud.mapper.base.ZgxglPOMapper" >
+  	<!-- 以下写查询方法 -->
+  	<select id="getSsfw" resultType="java.util.Map">
+	  	select pkid as value,wfwmc as label from ZHXG_FWGL_HDFWLB
+  	</select>
+  	<select id="getAllGz" resultType="java.util.Map">
+	  	select g.hcglgzid,z.zgxid,g.glgzid,z.zgxmc,c1.mc as sszgmb,h.wfwmc as ssfw,
+	  	z.zgst,z.zgtjzd,z.zgtjzdlxdm,g.zd,g.ysfdm,g.zhqgzdm,g.csz,g.glgzmc,g.zdlxdm 
+	  	from ZHXG_ZG_ZGXGL z 
+	  	left join ZHXG_ZG_ZGXGL_GLGZ g on g.zgxid=z.zgxid 
+	  	left join ZHXG_XTGL_DMK_Fl f1 on f1.DMBZ='ZGJD_SSZGMBDM' 
+	  	left join ZHXG_XTGL_DMK_CL c1 on c1.FLID=f1.PKID and c1.DM=z.sszgmbdm and c1.ZT=1 
+	  	left join ZHXG_FWGL_HDFWLB h on h.PKID=z.hdfwid where z.zgxid=#{pkid}
+  	</select>
+  	<select id="getZgst" resultType="java.util.Map">
+	  	select a.view_name as zgst from ZHXG_FWGL_HDFWLB h,all_views a 
+		where upper(h.SJKYH)=a.OWNER and h.PKID=#{pkid}
+  	</select>
+  	<select id="getZgtjzd" resultType="java.util.Map">
+  		select column_name as zgtjzd from all_views a,all_col_comments c
+		where c.TABLE_NAME=a.VIEW_NAME and a.VIEW_NAME=#{pkid}
+  	</select>
+  	<select id="selectInitData" resultType="java.util.Map">
+	  	select z.zgxid,z.zgxmc,z.sszgmbdm,z.hdfwid,z.zgst,z.zgtjzd,z.zgtjzdlxdm,z.xlkbz,z.ms,h.wfwmc 
+	  	from ZHXG_ZG_ZGXGL z 
+	  	left join ZHXG_FWGL_HDFWLB h on h.PKID=z.hdfwid where z.zgxid=#{pkid}
+  	</select>
+  	<select id="selectHtid" resultType="java.lang.String">
+	  	select pkid from ZHXG_FWGL_HDFWLB where wfwmc=#{ssfw}
+  	</select>
+  	<select id="getAllGzB" resultType="java.util.Map">
+	  	select t.glgzid,t.hcglgzid from ZHXG_ZG_ZGXGL_GLGZ t where ZGXID=#{zgxid}
+  	</select>
+  	<!-- 以下写插入方法 -->
+  	<!-- 批量插入方法，此方法不要改动否则更新表的时候会被覆盖 -->
+  	<!-- 使用此方法的时候请使用NHMybatisUtils.batchCommit(ZgxglPOMapper.class,list);进行调用，这主要是为了解决插入数据量多的时候需要分批次插入 -->
+    <insert id="insertPOBatch" parameterType="java.util.List">
+	    insert into ZHXG_ZG_ZGXGL(ZGXID,ZGXMC,SSZGMBDM,HDFWID,ZGST,ZGTJZD,ZGTJZDLXDM)
+	        (
+	            <foreach collection="list" item="row" index="index" separator="union all">
+	                (select 
+						#{row.zgxid,jdbcType=VARCHAR},
+						#{row.zgxmc,jdbcType=VARCHAR},
+						#{row.sszgmbdm,jdbcType=VARCHAR},
+						#{row.hdfwid,jdbcType=VARCHAR},
+						#{row.zgst,jdbcType=VARCHAR},
+						#{row.zgtjzd,jdbcType=VARCHAR},
+						#{row.zgtjzdlxdm,jdbcType=VARCHAR}
+	                   from dual)
+	            </foreach> 
+	        )
+	</insert> 
+  	<insert id="insertGLGZ" parameterType="com.ly.cloud.entity.base.ZgxglGlgzPO">
+  		insert into ZHXG_ZG_ZGXGL_GLGZ(GLGZID,GLGZMC,ZGXID,ZD,YSFDM,ZHQGZDM,CSZ,HCGLGZID,ZDLXDM) 
+  		values(#{glgzid},#{glgzmc},#{zgxid},#{zd},#{ysfdm},#{zhqgzdm},#{csz},#{hcglgzid},#{zdlxdm})
+  	</insert>
+  	<!-- 以下写更新方法 -->
+  	<update id="updateGLGZ">
+  		update ZHXG_ZG_ZGXGL_GLGZ set HCGLGZID=#{hcglgzid} where GLGZID=#{glgzid}
+  	</update>
+  	<!-- 以下写删除方法 -->
+  	<delete id="deleteGLGZ">
+  		delete ZHXG_ZG_ZGXGL_GLGZ where GLGZID=#{glgzid}
+  	</delete>
+</mapper>
